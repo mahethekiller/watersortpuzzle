@@ -26,7 +26,7 @@ export class MainMenuScene extends BaseScene {
 
     const titleStyle = new TextStyle({
       fontFamily: 'system-ui, sans-serif',
-      fontSize: 40,
+      fontSize: 42,
       fontWeight: 'bold',
       fill: 0x38bdf8,
       stroke: { color: 0x0f172a, width: 4 },
@@ -52,8 +52,8 @@ export class MainMenuScene extends BaseScene {
 
     this.playBtn = new UIButton({
       label: `Play Level ${currentLvl}`,
-      width: 260,
-      height: 56,
+      width: 270,
+      height: 58,
       backgroundColor: 0x22c55e,
       fontSize: 20,
       onClick: () => this.onPlayClicked(),
@@ -63,8 +63,8 @@ export class MainMenuScene extends BaseScene {
     const dailyDone = DailyChallengeManager.getInstance().isDailyChallengeCompleted();
     this.dailyBtn = new UIButton({
       label: dailyDone ? 'Daily Done ✅' : '📅 Daily Challenge',
-      width: 260,
-      height: 50,
+      width: 270,
+      height: 52,
       backgroundColor: dailyDone ? 0x475569 : 0xeab308,
       fontSize: 17,
       onClick: () => this.onDailyClicked(),
@@ -73,8 +73,8 @@ export class MainMenuScene extends BaseScene {
 
     this.levelSelectBtn = new UIButton({
       label: 'Level Select',
-      width: 260,
-      height: 50,
+      width: 270,
+      height: 52,
       backgroundColor: 0x0284c7,
       fontSize: 17,
       onClick: () => this.onLevelSelectClicked(),
@@ -83,8 +83,8 @@ export class MainMenuScene extends BaseScene {
 
     this.settingsBtn = new UIButton({
       label: 'Settings',
-      width: 260,
-      height: 50,
+      width: 270,
+      height: 52,
       backgroundColor: 0x475569,
       fontSize: 17,
       onClick: () => this.onSettingsClicked(),
@@ -137,26 +137,34 @@ export class MainMenuScene extends BaseScene {
     const centerX = width / 2;
 
     this.titleText.x = centerX;
-    this.titleText.y = height * 0.20;
+    this.titleText.y = Math.floor(height * 0.18);
 
     this.subtitleText.x = centerX;
-    this.subtitleText.y = height * 0.27;
+    this.subtitleText.y = Math.floor(height * 0.25);
 
-    const btnStartX = centerX - 130;
-    let startY = height * 0.38;
+    const btnWidth = Math.min(320, Math.floor(width * 0.8));
+    const btnHeight = Math.min(60, Math.floor(height * 0.07));
+    const btnStartX = centerX - btnWidth / 2;
 
+    let startY = Math.floor(height * 0.36);
+    const gap = Math.min(20, Math.floor(height * 0.025));
+
+    this.playBtn.setDimensions(btnWidth, btnHeight);
     this.playBtn.x = btnStartX;
     this.playBtn.y = startY;
 
-    startY += 68;
+    startY += btnHeight + gap;
+    this.dailyBtn.setDimensions(btnWidth, btnHeight);
     this.dailyBtn.x = btnStartX;
     this.dailyBtn.y = startY;
 
-    startY += 62;
+    startY += btnHeight + gap;
+    this.levelSelectBtn.setDimensions(btnWidth, btnHeight);
     this.levelSelectBtn.x = btnStartX;
     this.levelSelectBtn.y = startY;
 
-    startY += 62;
+    startY += btnHeight + gap;
+    this.settingsBtn.setDimensions(btnWidth, btnHeight);
     this.settingsBtn.x = btnStartX;
     this.settingsBtn.y = startY;
 

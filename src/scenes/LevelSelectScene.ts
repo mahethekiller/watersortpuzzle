@@ -20,21 +20,21 @@ export class LevelSelectScene extends BaseScene {
 
     const titleStyle = new TextStyle({
       fontFamily: 'system-ui, sans-serif',
-      fontSize: 32,
+      fontSize: 28,
       fontWeight: 'bold',
       fill: 0xf8fafc,
       align: 'center',
     });
     this.titleText = new Text({ text: 'Select Level', style: titleStyle });
-    this.titleText.anchor.set(0.5, 0);
+    this.titleText.anchor.set(0.5, 0.5);
     this.addChild(this.titleText);
 
     this.backBtn = new UIButton({
       label: 'Back',
-      width: 100,
-      height: 40,
+      width: 85,
+      height: 38,
       backgroundColor: 0x475569,
-      fontSize: 16,
+      fontSize: 15,
       onClick: () => this.onBackClicked(),
     });
     this.addChild(this.backBtn);
@@ -59,7 +59,7 @@ export class LevelSelectScene extends BaseScene {
         width: 60,
         height: 60,
         backgroundColor: isCurrent ? 0x22c55e : isUnlocked ? 0x0284c7 : 0x334155,
-        fontSize: starsCount > 0 ? 14 : 18,
+        fontSize: starsCount > 0 ? 13 : 17,
         onClick: () => {
           if (isUnlocked) {
             this.levelManager.setCurrentLevel(i);
@@ -83,27 +83,31 @@ export class LevelSelectScene extends BaseScene {
     sceneMgr.changeScene('MainMenuScene');
   }
 
-  public override onResize(width: number, _height: number): void {
+  public override onResize(width: number, height: number): void {
+    const paddingX = Math.min(20, Math.floor(width * 0.04));
+    const topY = Math.max(16, Math.floor(height * 0.03));
+
+    this.backBtn.x = paddingX;
+    this.backBtn.y = topY;
+
     this.titleText.x = width / 2;
-    this.titleText.y = 30;
+    this.titleText.y = topY + 19;
 
-    this.backBtn.x = 20;
-    this.backBtn.y = 26;
-
-    const cols = Math.min(5, Math.floor((width - 40) / 75));
-    const btnW = 60;
-    const btnH = 60;
-    const gapX = 15;
-    const gapY = 15;
+    const cols = Math.min(5, Math.floor((width - paddingX * 2) / 68));
+    const btnW = Math.min(64, Math.floor((width - paddingX * 2 - (cols - 1) * 12) / cols));
+    const btnH = btnW;
+    const gapX = 12;
+    const gapY = 12;
 
     const gridW = cols * btnW + (cols - 1) * gapX;
     const startX = (width - gridW) / 2;
-    const startY = 110;
+    const startY = topY + 55;
 
     this.levelButtons.forEach((btn, index) => {
       const col = index % cols;
       const row = Math.floor(index / cols);
 
+      btn.setDimensions(btnW, btnH);
       btn.x = startX + col * (btnW + gapX);
       btn.y = startY + row * (btnH + gapY);
     });

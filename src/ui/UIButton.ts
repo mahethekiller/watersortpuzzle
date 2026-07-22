@@ -101,6 +101,16 @@ export class UIButton extends Container {
     this.bgGraphics.fill({ color: 0xffffff, alpha: 0.15 });
   }
 
+  public setDimensions(width: number, height: number): void {
+    this.buttonWidth = width;
+    this.buttonHeight = height;
+    if (this.labelText) {
+      this.labelText.x = this.buttonWidth / 2;
+      this.labelText.y = this.buttonHeight / 2;
+    }
+    this.draw();
+  }
+
   public getWidth(): number {
     return this.buttonWidth;
   }

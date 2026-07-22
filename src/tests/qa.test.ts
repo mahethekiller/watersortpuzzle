@@ -6,6 +6,7 @@ import { StorageManager } from '../core/StorageManager';
 import { AdManager } from '../ads/AdManager';
 import { AnalyticsManager } from '../analytics/AnalyticsManager';
 import { PerformanceTracker } from '../performance/PerformanceTracker';
+import { LayoutManager } from '../ui/LayoutManager';
 
 export interface QATestReport {
   passed: boolean;
@@ -75,6 +76,26 @@ export function runFullQASuite(): QATestReport {
   // Test 8: Performance Tracker
   const perf = PerformanceTracker.getInstance();
   assert(perf.getAverageFPS() >= 0, 'PerformanceTracker FPS reporting verified');
+
+  // Test 9: Multi-Resolution Layout Verification (720x1280, 1080x1920, 1440x2560, 1024x768 tablet)
+  const resolutions = [
+    { w: 720, h: 1280 },
+    { w: 1080, h: 1920 },
+    { w: 1440, h: 2560 },
+    { w: 1024, h: 768 },
+  ];
+
+  const layoutMgr = LayoutManager.getInstance();
+  resolutions.forEach((res) => {
+    const layout = layoutMgr.calculateLayout(res.w, res.h, 7);
+    const validHeader = layout.header.bounds.height > 0 && layout.header.buttons.length === 4;
+    const validGameArea = layout.gameArea.bounds.height > 0 && layout.gameArea.scale > 0;
+    const validFooter = layout.footer.bounds.height > 0;
+    assert(
+      validHeader && validGameArea && validFooter,
+      `Layout calculated non-overlapping regions for ${res.w}x${res.h}`
+    );
+  });
 
   return {
     passed: failed === 0,

@@ -1,3 +1,5 @@
+import type { GameAreaLayoutInfo } from '../ui/LayoutManager';
+
 export interface BottleTransform {
   x: number;
   y: number;
@@ -6,69 +8,40 @@ export interface BottleTransform {
   col: number;
 }
 
-export interface LayoutOptions {
-  screenWidth: number;
-  screenHeight: number;
-  bottleCount: number;
-  baseBottleWidth?: number;
-  baseBottleHeight?: number;
-  maxColsPerRow?: number;
-  paddingX?: number;
-  paddingY?: number;
-}
-
 export class ResponsiveLayout {
-  public static calculateLayout(options: LayoutOptions): BottleTransform[] {
-    const {
-      screenWidth,
-      screenHeight,
-      bottleCount,
-      baseBottleWidth = 80,
-      baseBottleHeight = 240,
-      maxColsPerRow = 5,
-      paddingX = 24,
-      paddingY = 40,
-    } = options;
-
+  public static calculateGameAreaLayout(
+    gameAreaInfo: GameAreaLayoutInfo,
+    bottleCount: number
+  ): BottleTransform[] {
     if (bottleCount <= 0) return [];
 
-    let numRows = 1;
-    let numCols = bottleCount;
+    const { bounds, scale, bottleWidth, bottleHeight } = gameAreaInfo;
 
-    if (bottleCount > maxColsPerRow) {
-      numRows = Math.ceil(bottleCount / maxColsPerRow);
-      numCols = Math.min(bottleCount, maxColsPerRow);
+    let numRows = 1;
+    let maxColsPerRow = bottleCount;
+
+    if (bottleCount > 5) {
+      numRows = 2;
+      maxColsPerRow = Math.ceil(bottleCount / 2);
     }
 
-    const availableWidth = screenWidth * 0.9;
-    const availableHeight = screenHeight * 0.75;
+    const gapX = Math.min(24 * scale, Math.floor(bounds.width * 0.035));
+    const gapY = Math.min(36 * scale, Math.floor(bounds.height * 0.04));
 
-    const rowWidthNeeded = numCols * baseBottleWidth + (numCols - 1) * paddingX;
-    const colHeightNeeded = numRows * baseBottleHeight + (numRows - 1) * paddingY;
-
-    const scaleX = availableWidth / rowWidthNeeded;
-    const scaleY = availableHeight / colHeightNeeded;
-    const scale = Math.min(scaleX, scaleY, 1.2);
-
-    const scaledBottleWidth = baseBottleWidth * scale;
-    const scaledBottleHeight = baseBottleHeight * scale;
-    const scaledPaddingX = paddingX * scale;
-    const scaledPaddingY = paddingY * scale;
-
-    const totalGridHeight = numRows * scaledBottleHeight + (numRows - 1) * scaledPaddingY;
-    const startY = (screenHeight - totalGridHeight) / 2;
+    const totalGridHeight = numRows * bottleHeight + (numRows - 1) * gapY;
+    const startY = bounds.y + (bounds.height - totalGridHeight) / 2;
 
     const transforms: BottleTransform[] = [];
 
     let currentIndex = 0;
     for (let r = 0; r < numRows; r++) {
       const itemsInThisRow = Math.min(bottleCount - currentIndex, maxColsPerRow);
-      const rowWidth = itemsInThisRow * scaledBottleWidth + (itemsInThisRow - 1) * scaledPaddingX;
-      const startX = (screenWidth - rowWidth) / 2;
+      const rowWidth = itemsInThisRow * bottleWidth + (itemsInThisRow - 1) * gapX;
+      const startX = bounds.x + (bounds.width - rowWidth) / 2;
 
       for (let c = 0; c < itemsInThisRow; c++) {
-        const x = startX + c * (scaledBottleWidth + scaledPaddingX);
-        const y = startY + r * (scaledBottleHeight + scaledPaddingY);
+        const x = startX + c * (bottleWidth + gapX);
+        const y = startY + r * (bottleHeight + gapY);
 
         transforms.push({
           x,

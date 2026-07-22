@@ -1,5 +1,6 @@
-import { Container, Text, TextStyle } from 'pixi.js';
+import { Container, Graphics, Text, TextStyle } from 'pixi.js';
 import { UIButton } from './UIButton';
+import type { HeaderLayoutInfo } from './LayoutManager';
 
 export interface HUDCallbacks {
   onUndo?: () => void;
@@ -9,8 +10,10 @@ export interface HUDCallbacks {
 }
 
 export class HUD extends Container {
+  private levelBadgeBg: Graphics;
+  private coinsBadgeBg: Graphics;
+
   private levelText: Text;
-  private movesText: Text;
   private coinsText: Text;
 
   private hintBtn: UIButton;
@@ -21,67 +24,60 @@ export class HUD extends Container {
   constructor(callbacks: HUDCallbacks = {}) {
     super();
 
-    const titleStyle = new TextStyle({
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: 22,
-      fontWeight: 'bold',
-      fill: 0xf8fafc,
-    });
+    this.levelBadgeBg = new Graphics();
+    this.coinsBadgeBg = new Graphics();
+    this.addChild(this.levelBadgeBg);
+    this.addChild(this.coinsBadgeBg);
 
-    const subStyle = new TextStyle({
+    const badgeStyle = new TextStyle({
       fontFamily: 'system-ui, sans-serif',
       fontSize: 15,
-      fill: 0x94a3b8,
+      fontWeight: 'bold',
+      fill: 0xf8fafc,
+      align: 'center',
     });
 
     const coinsStyle = new TextStyle({
       fontFamily: 'system-ui, sans-serif',
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: 'bold',
       fill: 0xfacc15,
+      align: 'center',
     });
 
-    this.levelText = new Text({ text: 'Level 1', style: titleStyle });
-    this.movesText = new Text({ text: 'Moves: 0', style: subStyle });
-    this.coinsText = new Text({ text: 'Coins: 100', style: coinsStyle });
-
+    this.levelText = new Text({ text: 'Level 1', style: badgeStyle });
+    this.levelText.anchor.set(0.5);
     this.addChild(this.levelText);
-    this.addChild(this.movesText);
+
+    this.coinsText = new Text({ text: '💰 100', style: coinsStyle });
+    this.coinsText.anchor.set(0.5);
     this.addChild(this.coinsText);
 
     this.hintBtn = new UIButton({
-      label: 'Hint',
-      width: 70,
-      height: 38,
+      label: '💡 Hint',
       backgroundColor: 0xeab308,
-      fontSize: 14,
+      fontSize: 13,
       onClick: callbacks.onHint,
     });
 
     this.undoBtn = new UIButton({
-      label: 'Undo',
-      width: 70,
-      height: 38,
+      label: '↩️ Undo',
       backgroundColor: 0x6366f1,
-      fontSize: 14,
+      fontSize: 13,
       onClick: callbacks.onUndo,
     });
 
     this.restartBtn = new UIButton({
-      label: 'Restart',
-      width: 70,
-      height: 38,
+      label: '🔄 Reset',
       backgroundColor: 0x0284c7,
-      fontSize: 14,
+      fontSize: 13,
       onClick: callbacks.onRestart,
     });
 
     this.pauseBtn = new UIButton({
-      label: 'Pause',
-      width: 65,
-      height: 38,
+      label: '⏸️ Menu',
       backgroundColor: 0x475569,
-      fontSize: 14,
+      fontSize: 13,
       onClick: callbacks.onPause,
     });
 
@@ -89,52 +85,70 @@ export class HUD extends Container {
     this.addChild(this.undoBtn);
     this.addChild(this.restartBtn);
     this.addChild(this.pauseBtn);
-
-    this.resize(window.innerWidth);
   }
 
   public setLevel(levelNumber: number): void {
     this.levelText.text = `Level ${levelNumber}`;
   }
 
-  public setMoves(moves: number): void {
-    this.movesText.text = `Moves: ${moves}`;
+  public setMoves(_moves: number): void {
+    // Tracked internally
   }
 
   public setCoins(coins: number): void {
-    this.coinsText.text = `Coins: ${coins}`;
+    this.coinsText.text = `💰 ${coins}`;
   }
 
   public setUndoDisabled(disabled: boolean): void {
     this.undoBtn.setDisabled(disabled);
   }
 
-  public resize(screenWidth: number): void {
-    const padding = 16;
+  public applyHeaderLayout(headerInfo: HeaderLayoutInfo): void {
+    const { levelBadgePos, coinsBadgePos, buttons } = headerInfo;
 
-    this.levelText.x = padding;
-    this.levelText.y = padding;
+    // Draw Level Pill Badge
+    this.levelBadgeBg.clear();
+    this.levelBadgeBg.roundRect(
+      levelBadgePos.x,
+      levelBadgePos.y,
+      levelBadgePos.width,
+      levelBadgePos.height,
+      levelBadgePos.height / 2
+    );
+    this.levelBadgeBg.fill({ color: 0x1e293b, alpha: 0.95 });
+    this.levelBadgeBg.stroke({ color: 0x334155, width: 2 });
 
-    this.movesText.x = padding;
-    this.movesText.y = padding + 26;
+    this.levelText.x = levelBadgePos.x + levelBadgePos.width / 2;
+    this.levelText.y = levelBadgePos.y + levelBadgePos.height / 2;
 
-    this.coinsText.x = padding + 105;
-    this.coinsText.y = padding + 26;
+    // Draw Coins Pill Badge
+    this.coinsBadgeBg.clear();
+    this.coinsBadgeBg.roundRect(
+      coinsBadgePos.x,
+      coinsBadgePos.y,
+      coinsBadgePos.width,
+      coinsBadgePos.height,
+      coinsBadgePos.height / 2
+    );
+    this.coinsBadgeBg.fill({ color: 0x1e293b, alpha: 0.95 });
+    this.coinsBadgeBg.stroke({ color: 0x334155, width: 2 });
 
-    let rightX = screenWidth - padding - 65;
-    this.pauseBtn.x = rightX;
-    this.pauseBtn.y = padding;
+    this.coinsText.x = coinsBadgePos.x + coinsBadgePos.width / 2;
+    this.coinsText.y = coinsBadgePos.y + coinsBadgePos.height / 2;
 
-    rightX -= (70 + 8);
-    this.restartBtn.x = rightX;
-    this.restartBtn.y = padding;
+    // Position Action Buttons
+    buttons.forEach((btnData) => {
+      let buttonInstance: UIButton | null = null;
+      if (btnData.id === 'hint') buttonInstance = this.hintBtn;
+      else if (btnData.id === 'undo') buttonInstance = this.undoBtn;
+      else if (btnData.id === 'restart') buttonInstance = this.restartBtn;
+      else if (btnData.id === 'pause') buttonInstance = this.pauseBtn;
 
-    rightX -= (70 + 8);
-    this.undoBtn.x = rightX;
-    this.undoBtn.y = padding;
-
-    rightX -= (70 + 8);
-    this.hintBtn.x = rightX;
-    this.hintBtn.y = padding;
+      if (buttonInstance) {
+        buttonInstance.x = btnData.x;
+        buttonInstance.y = btnData.y;
+        buttonInstance.setDimensions(btnData.width, btnData.height);
+      }
+    });
   }
 }

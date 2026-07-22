@@ -8,6 +8,8 @@ import type { Application } from 'pixi.js';
 import { runGameplayTests } from '../tests/gameplay.test';
 import { runFullQASuite } from '../tests/qa.test';
 
+import { LayoutManager } from '../ui/LayoutManager';
+
 export class BootScene extends BaseScene {
   public readonly sceneName = 'BootScene';
 
@@ -44,16 +46,8 @@ export class BootScene extends BaseScene {
   public override onResize(width: number, height: number): void {
     if (this.bottles.length === 0) return;
 
-    const transforms = ResponsiveLayout.calculateLayout({
-      screenWidth: width,
-      screenHeight: height,
-      bottleCount: this.bottleCount,
-      baseBottleWidth: 80,
-      baseBottleHeight: 240,
-      maxColsPerRow: 4,
-      paddingX: 30,
-      paddingY: 50,
-    });
+    const fullLayout = LayoutManager.getInstance().calculateLayout(width, height, this.bottleCount);
+    const transforms = ResponsiveLayout.calculateGameAreaLayout(fullLayout.gameArea, this.bottleCount);
 
     for (let i = 0; i < this.bottles.length; i++) {
       if (transforms[i]) {

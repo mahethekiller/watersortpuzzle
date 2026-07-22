@@ -8,7 +8,9 @@ import { LevelManager } from '../levels/LevelManager';
 import { WaterSortGame } from '../game/WaterSortGame';
 import { HintSolver } from '../game/HintSolver';
 import { EconomyManager } from '../game/EconomyManager';
+import { LayoutManager } from '../ui/LayoutManager';
 import { HUD } from '../ui/HUD';
+import { Footer } from '../ui/Footer';
 import { PauseModal } from '../ui/PauseModal';
 import { WinDialog } from '../ui/WinDialog';
 import { ParticleSystem } from '../effects/ParticleSystem';
@@ -27,6 +29,7 @@ export class GameScene extends BaseScene {
   private originalPositions: Map<number, { x: number; y: number }> = new Map();
 
   private hud: HUD;
+  private footer: Footer;
   private pauseModal: PauseModal | null = null;
   private winDialog: WinDialog | null = null;
   private particleSystem: ParticleSystem;
@@ -47,6 +50,7 @@ export class GameScene extends BaseScene {
       onHint: () => this.handleHint(),
     });
 
+    this.footer = new Footer();
     this.particleSystem = new ParticleSystem();
     this.liquidStream = new LiquidStreamEffect();
   }
@@ -60,6 +64,7 @@ export class GameScene extends BaseScene {
 
     this.addChild(this.liquidStream);
     this.addChild(this.particleSystem);
+    this.addChild(this.footer);
     this.addChild(this.hud);
 
     this.loadCurrentLevel();
@@ -101,8 +106,9 @@ export class GameScene extends BaseScene {
       this.addChild(bottleRenderer);
     }
 
-    this.setChildIndex(this.liquidStream, this.children.length - 3);
-    this.setChildIndex(this.particleSystem, this.children.length - 2);
+    this.setChildIndex(this.liquidStream, this.children.length - 4);
+    this.setChildIndex(this.particleSystem, this.children.length - 3);
+    this.setChildIndex(this.footer, this.children.length - 2);
     this.setChildIndex(this.hud, this.children.length - 1);
 
     this.onResize(window.innerWidth, window.innerHeight);
@@ -203,8 +209,6 @@ export class GameScene extends BaseScene {
 
     setTimeout(() => {
       if (!this.winDialog) {
-        const lvlNum = this.levelManager.getCurrentLevelNumber();
-        const moves = this.game.getMoveCount();
         this.winDialog = new WinDialog(lvlNum, moves, {
           onNextLevel: () => {
             this.levelManager.completeCurrentLevel();
@@ -303,33 +307,35 @@ export class GameScene extends BaseScene {
   }
 
   public override onResize(width: number, height: number): void {
-    this.hud.resize(width);
-
     const bottleCount = this.bottleRenderers.size;
-    if (bottleCount === 0) return;
+    const fullLayout = LayoutManager.getInstance().calculateLayout(width, height, bottleCount);
 
-    const transforms = ResponsiveLayout.calculateLayout({
-      screenWidth: width,
-      screenHeight: height,
-      bottleCount: bottleCount,
-      baseBottleWidth: 80,
-      baseBottleHeight: 240,
-      maxColsPerRow: Math.min(bottleCount, 5),
-      paddingX: 24,
-      paddingY: 40,
-    });
+    // Apply 15% Header Layout
+    this.hud.applyHeaderLayout(fullLayout.header);
 
-    let idx = 0;
-    this.bottleRenderers.forEach((renderer, id) => {
-      if (transforms[idx]) {
-        const tf = transforms[idx];
-        renderer.x = tf.x;
-        renderer.y = tf.y;
-        renderer.scale.set(tf.scale);
-        this.originalPositions.set(id, { x: tf.x, y: tf.y });
-      }
-      idx++;
-    });
+    // Apply 15% Footer Layout
+    this.footer.resize(
+      fullLayout.footer.bounds.x,
+      fullLayout.footer.bounds.y,
+      fullLayout.footer.bounds.width,
+      fullLayout.footer.bounds.height
+    );
+
+    // Position Center 70% Game Area Bottles
+    if (bottleCount > 0) {
+      const transforms = ResponsiveLayout.calculateGameAreaLayout(fullLayout.gameArea, bottleCount);
+      let idx = 0;
+      this.bottleRenderers.forEach((renderer, id) => {
+        if (transforms[idx]) {
+          const tf = transforms[idx];
+          renderer.x = tf.x;
+          renderer.y = tf.y;
+          renderer.scale.set(tf.scale);
+          this.originalPositions.set(id, { x: tf.x, y: tf.y });
+        }
+        idx++;
+      });
+    }
 
     if (this.pauseModal) {
       this.pauseModal.resize(width, height);
