@@ -6,6 +6,7 @@ import { ServiceContainer } from '../core/ServiceContainer';
 import type { Application } from 'pixi.js';
 
 import { runGameplayTests } from '../tests/gameplay.test';
+import { runFullQASuite } from '../tests/qa.test';
 
 export class BootScene extends BaseScene {
   public readonly sceneName = 'BootScene';
@@ -14,8 +15,9 @@ export class BootScene extends BaseScene {
   private bottleCount: number = 7;
 
   public override async onInit(): Promise<void> {
-    // Execute pure domain gameplay test suite
+    // Execute pure domain gameplay & QA test suite
     runGameplayTests();
+    runFullQASuite();
 
     const container = ServiceContainer.getInstance();
     if (container.has('pixiApp')) {
