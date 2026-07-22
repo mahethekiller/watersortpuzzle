@@ -11,6 +11,7 @@ import { BootScene } from '../scenes/BootScene';
 import { GameScene } from '../scenes/GameScene';
 import { MainMenuScene } from '../scenes/MainMenuScene';
 import { LevelSelectScene } from '../scenes/LevelSelectScene';
+import { AdManager } from '../ads/AdManager';
 
 export class Game {
   private static instance: Game;
@@ -50,9 +51,11 @@ export class Game {
     const assetLoader = new AssetLoader();
     const sceneManager = new SceneManager(app.stage);
     const gameLoop = new GameLoop(app.ticker);
+    const adManager = AdManager.getInstance();
 
     inputManager.init(app.canvas as HTMLElement);
     await assetLoader.init();
+    await adManager.init();
 
     // Register Services
     container.register('eventBus', eventBus);
@@ -61,6 +64,7 @@ export class Game {
     container.register('assetLoader', assetLoader);
     container.register('sceneManager', sceneManager);
     container.register('gameLoop', gameLoop);
+    container.register('adManager', adManager);
     container.register('pixiApp', app);
 
     // Bind scene manager update to game loop
