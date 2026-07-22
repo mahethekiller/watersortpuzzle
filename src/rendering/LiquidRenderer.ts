@@ -2,7 +2,7 @@ import { Container, Graphics } from 'pixi.js';
 
 export interface LiquidLayerData {
   color: number;
-  units: number;
+  amount: number;
 }
 
 export interface LiquidRendererOptions {
@@ -58,7 +58,7 @@ export class LiquidRenderer extends Container {
 
     for (let i = 0; i < this.layers.length; i++) {
       const layer = this.layers[i];
-      const layerHeight = layer.units * unitHeight;
+      const layerHeight = layer.amount * unitHeight;
       const topY = currentY - layerHeight;
 
       this.graphics.roundRect(

@@ -8,6 +8,7 @@ import { AssetLoader } from './AssetLoader';
 import { SceneManager } from './SceneManager';
 import { GameLoop } from './GameLoop';
 import { BootScene } from '../scenes/BootScene';
+import { GameScene } from '../scenes/GameScene';
 
 export class Game {
   private static instance: Game;
@@ -70,9 +71,10 @@ export class Game {
       sceneManager.onResize(width, height);
     });
 
-    // Register and load initial scene
+    // Register scenes and launch GameScene
     sceneManager.registerScene('BootScene', BootScene);
-    await sceneManager.changeScene('BootScene');
+    sceneManager.registerScene('GameScene', GameScene);
+    await sceneManager.changeScene('GameScene');
 
     this.isInitialized = true;
   }

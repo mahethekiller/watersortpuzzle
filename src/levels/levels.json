@@ -1,0 +1,302 @@
+[
+  {
+    "levelNumber": 1,
+    "bottleCount": 3,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 3, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 2,
+    "bottleCount": 4,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 3, "layers": [] },
+      { "id": 4, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 3,
+    "bottleCount": 5,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 4, "layers": [] },
+      { "id": 5, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 4,
+    "bottleCount": 5,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }, { "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 4, "layers": [] },
+      { "id": 5, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 5,
+    "bottleCount": 6,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 5, "layers": [] },
+      { "id": 6, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 6,
+    "bottleCount": 6,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 5, "layers": [] },
+      { "id": 6, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 7,
+    "bottleCount": 7,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 6, "layers": [] },
+      { "id": 7, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 8,
+    "bottleCount": 7,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }, { "color": 2278750, "amount": 1 }, { "color": 15381512, "amount": 1 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 1 }, { "color": 15680580, "amount": 1 }, { "color": 15381512, "amount": 1 }, { "color": 2278750, "amount": 1 }] },
+      { "id": 3, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 5, "layers": [] },
+      { "id": 6, "layers": [] },
+      { "id": 7, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 9,
+    "bottleCount": 7,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 15680580, "amount": 4 }] },
+      { "id": 6, "layers": [] },
+      { "id": 7, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 10,
+    "bottleCount": 8,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 7, "layers": [] },
+      { "id": 8, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 11,
+    "bottleCount": 8,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 8703000, "amount": 2 }, { "color": 1357990, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 1357990, "amount": 2 }, { "color": 8703000, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 15680580, "amount": 4 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 4 }] },
+      { "id": 7, "layers": [] },
+      { "id": 8, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 12,
+    "bottleCount": 9,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 8, "layers": [] },
+      { "id": 9, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 13,
+    "bottleCount": 9,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }, { "color": 2278750, "amount": 1 }, { "color": 15381512, "amount": 1 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 1 }, { "color": 15680580, "amount": 1 }, { "color": 15381512, "amount": 1 }, { "color": 2278750, "amount": 1 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 8, "layers": [] },
+      { "id": 9, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 14,
+    "bottleCount": 10,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 8703000, "amount": 2 }, { "color": 1357990, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 9, "layers": [] },
+      { "id": 10, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 15,
+    "bottleCount": 10,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 1357990, "amount": 2 }, { "color": 8703000, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 9, "layers": [] },
+      { "id": 10, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 16,
+    "bottleCount": 10,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }, { "color": 2278750, "amount": 1 }, { "color": 15381512, "amount": 1 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 1 }, { "color": 15680580, "amount": 1 }, { "color": 15381512, "amount": 1 }, { "color": 2278750, "amount": 1 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 1 }, { "color": 16347926, "amount": 1 }, { "color": 440020, "amount": 1 }, { "color": 15485081, "amount": 1 }] },
+      { "id": 4, "layers": [{ "color": 16347926, "amount": 1 }, { "color": 11032055, "amount": 1 }, { "color": 15485081, "amount": 1 }, { "color": 440020, "amount": 1 }] },
+      { "id": 5, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 440020, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 9, "layers": [] },
+      { "id": 10, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 17,
+    "bottleCount": 11,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 8703000, "amount": 2 }, { "color": 1357990, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 9, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 10, "layers": [] },
+      { "id": 11, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 18,
+    "bottleCount": 11,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 1357990, "amount": 2 }, { "color": 8703000, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 9, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 10, "layers": [] },
+      { "id": 11, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 19,
+    "bottleCount": 12,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 2, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15381512, "amount": 2 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 4, "layers": [{ "color": 440020, "amount": 2 }, { "color": 15485081, "amount": 2 }] },
+      { "id": 5, "layers": [{ "color": 8703000, "amount": 2 }, { "color": 1357990, "amount": 2 }] },
+      { "id": 6, "layers": [{ "color": 3900150, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 7, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 2278750, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 16347926, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 9, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 440020, "amount": 2 }] },
+      { "id": 10, "layers": [{ "color": 1357990, "amount": 2 }, { "color": 8703000, "amount": 2 }] },
+      { "id": 11, "layers": [] },
+      { "id": 12, "layers": [] }
+    ]
+  },
+  {
+    "levelNumber": 20,
+    "bottleCount": 12,
+    "capacity": 4,
+    "bottles": [
+      { "id": 1, "layers": [{ "color": 15680580, "amount": 1 }, { "color": 3900150, "amount": 1 }, { "color": 2278750, "amount": 1 }, { "color": 15381512, "amount": 1 }] },
+      { "id": 2, "layers": [{ "color": 3900150, "amount": 1 }, { "color": 15680580, "amount": 1 }, { "color": 15381512, "amount": 1 }, { "color": 2278750, "amount": 1 }] },
+      { "id": 3, "layers": [{ "color": 11032055, "amount": 1 }, { "color": 16347926, "amount": 1 }, { "color": 440020, "amount": 1 }, { "color": 15485081, "amount": 1 }] },
+      { "id": 4, "layers": [{ "color": 16347926, "amount": 1 }, { "color": 11032055, "amount": 1 }, { "color": 15485081, "amount": 1 }, { "color": 440020, "amount": 1 }] },
+      { "id": 5, "layers": [{ "color": 8703000, "amount": 1 }, { "color": 1357990, "amount": 1 }, { "color": 8703000, "amount": 1 }, { "color": 1357990, "amount": 1 }] },
+      { "id": 6, "layers": [{ "color": 1357990, "amount": 1 }, { "color": 8703000, "amount": 1 }, { "color": 1357990, "amount": 1 }, { "color": 8703000, "amount": 1 }] },
+      { "id": 7, "layers": [{ "color": 2278750, "amount": 2 }, { "color": 15680580, "amount": 2 }] },
+      { "id": 8, "layers": [{ "color": 15381512, "amount": 2 }, { "color": 3900150, "amount": 2 }] },
+      { "id": 9, "layers": [{ "color": 440020, "amount": 2 }, { "color": 11032055, "amount": 2 }] },
+      { "id": 10, "layers": [{ "color": 15485081, "amount": 2 }, { "color": 16347926, "amount": 2 }] },
+      { "id": 11, "layers": [] },
+      { "id": 12, "layers": [] }
+    ]
+  }
+]
