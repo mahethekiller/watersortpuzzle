@@ -6,6 +6,8 @@ import { ServiceContainer } from '../core/ServiceContainer';
 import { SceneManager } from '../core/SceneManager';
 import { LevelManager } from '../levels/LevelManager';
 import { WaterSortGame } from '../game/WaterSortGame';
+import { HintSolver } from '../game/HintSolver';
+import { EconomyManager } from '../game/EconomyManager';
 import { HUD } from '../ui/HUD';
 import { PauseModal } from '../ui/PauseModal';
 import { WinDialog } from '../ui/WinDialog';
@@ -30,6 +32,7 @@ export class GameScene extends BaseScene {
   private liquidStream: LiquidStreamEffect;
 
   private isAnimatingPour: boolean = false;
+  private highlightedHintBottles: number[] = [];
 
   constructor() {
     super();
@@ -40,6 +43,7 @@ export class GameScene extends BaseScene {
       onUndo: () => this.handleUndo(),
       onRestart: () => this.handleRestart(),
       onPause: () => this.handlePause(),
+      onHint: () => this.handleHint(),
     });
 
     this.particleSystem = new ParticleSystem();
@@ -63,6 +67,7 @@ export class GameScene extends BaseScene {
   private loadCurrentLevel(): void {
     this.closeWinDialog();
     this.closePauseModal();
+    this.clearHintHighlights();
 
     this.bottleRenderers.forEach((renderer) => renderer.destroy());
     this.bottleRenderers.clear();
@@ -75,6 +80,7 @@ export class GameScene extends BaseScene {
 
     this.hud.setLevel(levelConfig.levelNumber);
     this.hud.setMoves(0);
+    this.hud.setCoins(EconomyManager.getInstance().getCoins());
     this.hud.setUndoDisabled(true);
 
     for (const bottleData of levelConfig.bottles) {
@@ -103,12 +109,12 @@ export class GameScene extends BaseScene {
   private async onBottleTapped(bottleId: number): Promise<void> {
     if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
 
+    this.clearHintHighlights();
+
     const previousSelectedId = this.game.getSelectedBottleId();
     const response = this.game.selectBottle(bottleId);
-
     const currentSelectedId = this.game.getSelectedBottleId();
 
-    // Bottle selected animation (Lift)
     if (response.action === 'selected' && currentSelectedId !== null) {
       AudioManager.getInstance().playSelect();
       const bottle = this.bottleRenderers.get(currentSelectedId);
@@ -118,7 +124,6 @@ export class GameScene extends BaseScene {
       }
     }
 
-    // Bottle deselected animation (Drop)
     if (response.action === 'deselected' && previousSelectedId !== null) {
       const bottle = this.bottleRenderers.get(previousSelectedId);
       const orig = this.originalPositions.get(previousSelectedId);
@@ -127,7 +132,6 @@ export class GameScene extends BaseScene {
       }
     }
 
-    // Bottle pour animation (Move, Tilt, Liquid Stream, Return)
     if (response.action === 'poured' && 'moveRecord' in response && response.moveRecord) {
       this.isAnimatingPour = true;
       AudioManager.getInstance().playPour();
@@ -158,6 +162,34 @@ export class GameScene extends BaseScene {
     }
   }
 
+  private handleHint(): void {
+    if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
+
+    const bestMove = HintSolver.findBestMove(this.game.getBottles());
+    if (!bestMove) return;
+
+    this.clearHintHighlights();
+
+    const source = this.bottleRenderers.get(bestMove.fromBottleId);
+    const target = this.bottleRenderers.get(bestMove.toBottleId);
+
+    if (source && target) {
+      source.setSelected(true);
+      target.setSelected(true);
+      this.highlightedHintBottles = [bestMove.fromBottleId, bestMove.toBottleId];
+    }
+  }
+
+  private clearHintHighlights(): void {
+    this.highlightedHintBottles.forEach((id) => {
+      const renderer = this.bottleRenderers.get(id);
+      if (renderer && id !== this.game.getSelectedBottleId()) {
+        renderer.setSelected(false);
+      }
+    });
+    this.highlightedHintBottles = [];
+  }
+
   private handleWin(): void {
     AudioManager.getInstance().playWin();
     this.particleSystem.spawnConfetti(70, window.innerWidth, window.innerHeight);
@@ -165,7 +197,8 @@ export class GameScene extends BaseScene {
     setTimeout(() => {
       if (!this.winDialog) {
         const lvlNum = this.levelManager.getCurrentLevelNumber();
-        this.winDialog = new WinDialog(lvlNum, {
+        const moves = this.game.getMoveCount();
+        this.winDialog = new WinDialog(lvlNum, moves, {
           onNextLevel: () => {
             this.levelManager.completeCurrentLevel();
             this.loadCurrentLevel();
@@ -177,6 +210,7 @@ export class GameScene extends BaseScene {
         });
         this.addChild(this.winDialog);
         this.winDialog.resize(window.innerWidth, window.innerHeight);
+        this.hud.setCoins(EconomyManager.getInstance().getCoins());
       }
     }, 400);
   }
@@ -191,6 +225,7 @@ export class GameScene extends BaseScene {
 
   private handleUndo(): void {
     if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
+    this.clearHintHighlights();
     const undone = this.game.undo();
     if (undone) {
       AudioManager.getInstance().playUndo();
@@ -200,6 +235,7 @@ export class GameScene extends BaseScene {
 
   private handleRestart(): void {
     if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
+    this.clearHintHighlights();
     const levelConfig = this.levelManager.getCurrentLevelConfig();
     if (levelConfig) {
       this.game.restart(levelConfig.bottles);
@@ -242,13 +278,15 @@ export class GameScene extends BaseScene {
     for (const bottleModel of bottles) {
       const renderer = this.bottleRenderers.get(bottleModel.id);
       if (renderer) {
-        renderer.setSelected(bottleModel.id === selectedId);
+        const isHinted = this.highlightedHintBottles.includes(bottleModel.id);
+        renderer.setSelected(bottleModel.id === selectedId || isHinted);
         renderer.setLiquidLayers([...bottleModel.getLayers()]);
       }
     }
 
     const moveCount = this.game.getMoveCount();
     this.hud.setMoves(moveCount);
+    this.hud.setCoins(EconomyManager.getInstance().getCoins());
     this.hud.setUndoDisabled(moveCount === 0);
   }
 

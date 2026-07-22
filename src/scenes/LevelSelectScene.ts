@@ -1,6 +1,7 @@
 import { Text, TextStyle } from 'pixi.js';
 import { BaseScene } from './BaseScene';
 import { LevelManager } from '../levels/LevelManager';
+import { EconomyManager } from '../game/EconomyManager';
 import { UIButton } from '../ui/UIButton';
 import { ServiceContainer } from '../core/ServiceContainer';
 import { SceneManager } from '../core/SceneManager';
@@ -45,17 +46,20 @@ export class LevelSelectScene extends BaseScene {
     const totalLevels = this.levelManager.getTotalLevels();
     const maxUnlocked = this.levelManager.getMaxUnlockedLevel();
     const currentLevel = this.levelManager.getCurrentLevelNumber();
+    const economy = EconomyManager.getInstance();
 
     for (let i = 1; i <= totalLevels; i++) {
       const isUnlocked = i <= maxUnlocked;
       const isCurrent = i === currentLevel;
+      const starsCount = economy.getStarsForLevel(i);
+      const starBadge = starsCount > 0 ? '\n' + '⭐'.repeat(starsCount) : '';
 
       const btn = new UIButton({
-        label: isUnlocked ? `${i}` : '🔒',
+        label: isUnlocked ? `${i}${starBadge}` : '🔒',
         width: 60,
         height: 60,
         backgroundColor: isCurrent ? 0x22c55e : isUnlocked ? 0x0284c7 : 0x334155,
-        fontSize: 18,
+        fontSize: starsCount > 0 ? 14 : 18,
         onClick: () => {
           if (isUnlocked) {
             this.levelManager.setCurrentLevel(i);
