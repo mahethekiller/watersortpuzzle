@@ -9,6 +9,8 @@ import { SceneManager } from './SceneManager';
 import { GameLoop } from './GameLoop';
 import { BootScene } from '../scenes/BootScene';
 import { GameScene } from '../scenes/GameScene';
+import { MainMenuScene } from '../scenes/MainMenuScene';
+import { LevelSelectScene } from '../scenes/LevelSelectScene';
 
 export class Game {
   private static instance: Game;
@@ -71,10 +73,12 @@ export class Game {
       sceneManager.onResize(width, height);
     });
 
-    // Register scenes and launch GameScene
+    // Register scenes and launch MainMenuScene
     sceneManager.registerScene('BootScene', BootScene);
     sceneManager.registerScene('GameScene', GameScene);
-    await sceneManager.changeScene('GameScene');
+    sceneManager.registerScene('MainMenuScene', MainMenuScene);
+    sceneManager.registerScene('LevelSelectScene', LevelSelectScene);
+    await sceneManager.changeScene('MainMenuScene');
 
     this.isInitialized = true;
   }

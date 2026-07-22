@@ -3,8 +3,11 @@ import { BottleRenderer } from '../rendering/BottleRenderer';
 import { ResponsiveLayout } from '../rendering/ResponsiveLayout';
 import { TextureManager } from '../rendering/TextureManager';
 import { ServiceContainer } from '../core/ServiceContainer';
+import { SceneManager } from '../core/SceneManager';
 import { LevelManager } from '../levels/LevelManager';
 import { WaterSortGame } from '../game/WaterSortGame';
+import { HUD } from '../ui/HUD';
+import { PauseModal } from '../ui/PauseModal';
 import type { Application } from 'pixi.js';
 
 export class GameScene extends BaseScene {
@@ -13,11 +16,19 @@ export class GameScene extends BaseScene {
   private levelManager: LevelManager;
   private game: WaterSortGame;
   private bottleRenderers: Map<number, BottleRenderer> = new Map();
+  private hud: HUD;
+  private pauseModal: PauseModal | null = null;
 
   constructor() {
     super();
     this.levelManager = new LevelManager();
     this.game = new WaterSortGame();
+
+    this.hud = new HUD({
+      onUndo: () => this.handleUndo(),
+      onRestart: () => this.handleRestart(),
+      onPause: () => this.handlePause(),
+    });
   }
 
   public override async onInit(): Promise<void> {
@@ -28,20 +39,22 @@ export class GameScene extends BaseScene {
     }
 
     this.loadCurrentLevel();
+    this.addChild(this.hud);
   }
 
   private loadCurrentLevel(): void {
-    // Clear previous renderers
     this.bottleRenderers.forEach((renderer) => renderer.destroy());
     this.bottleRenderers.clear();
 
     const levelConfig = this.levelManager.getCurrentLevelConfig();
     if (!levelConfig) return;
 
-    // Initialize game domain model
     this.game.initLevel(levelConfig.bottles);
 
-    // Create rendering components for each bottle
+    this.hud.setLevel(levelConfig.levelNumber);
+    this.hud.setMoves(0);
+    this.hud.setUndoDisabled(true);
+
     for (const bottleData of levelConfig.bottles) {
       const bottleRenderer = new BottleRenderer({
         width: 80,
@@ -49,10 +62,7 @@ export class GameScene extends BaseScene {
         capacity: levelConfig.capacity || 4,
       });
 
-      // Set initial liquid layers
       bottleRenderer.setLiquidLayers(bottleData.layers);
-
-      // Make bottle interactive
       bottleRenderer.eventMode = 'static';
       bottleRenderer.cursor = 'pointer';
       bottleRenderer.on('pointerdown', () => this.onBottleTapped(bottleData.id));
@@ -61,10 +71,15 @@ export class GameScene extends BaseScene {
       this.addChild(bottleRenderer);
     }
 
+    // Ensure HUD is on top
+    this.setChildIndex(this.hud, this.children.length - 1);
+
     this.onResize(window.innerWidth, window.innerHeight);
   }
 
   private onBottleTapped(bottleId: number): void {
+    if (this.pauseModal) return;
+
     const response = this.game.selectBottle(bottleId);
     this.updateRenderState();
 
@@ -73,6 +88,50 @@ export class GameScene extends BaseScene {
         this.levelManager.completeCurrentLevel();
         this.loadCurrentLevel();
       }, 400);
+    }
+  }
+
+  private handleUndo(): void {
+    if (this.pauseModal) return;
+    const undone = this.game.undo();
+    if (undone) {
+      this.updateRenderState();
+    }
+  }
+
+  private handleRestart(): void {
+    if (this.pauseModal) return;
+    const levelConfig = this.levelManager.getCurrentLevelConfig();
+    if (levelConfig) {
+      this.game.restart(levelConfig.bottles);
+      this.updateRenderState();
+    }
+  }
+
+  private handlePause(): void {
+    if (!this.pauseModal) {
+      this.pauseModal = new PauseModal({
+        onResume: () => this.closePauseModal(),
+        onRestart: () => {
+          this.closePauseModal();
+          this.handleRestart();
+        },
+        onLevelSelect: () => {
+          this.closePauseModal();
+          const sceneMgr = ServiceContainer.getInstance().get<SceneManager>('sceneManager');
+          sceneMgr.changeScene('LevelSelectScene');
+        },
+      });
+      this.addChild(this.pauseModal);
+      this.pauseModal.resize(window.innerWidth, window.innerHeight);
+    }
+  }
+
+  private closePauseModal(): void {
+    if (this.pauseModal) {
+      this.removeChild(this.pauseModal);
+      this.pauseModal.destroy();
+      this.pauseModal = null;
     }
   }
 
@@ -87,9 +146,15 @@ export class GameScene extends BaseScene {
         renderer.setLiquidLayers([...bottleModel.getLayers()]);
       }
     }
+
+    const moveCount = this.game.getMoveCount();
+    this.hud.setMoves(moveCount);
+    this.hud.setUndoDisabled(moveCount === 0);
   }
 
   public override onResize(width: number, height: number): void {
+    this.hud.resize(width);
+
     const bottleCount = this.bottleRenderers.size;
     if (bottleCount === 0) return;
 
@@ -114,9 +179,14 @@ export class GameScene extends BaseScene {
       }
       idx++;
     });
+
+    if (this.pauseModal) {
+      this.pauseModal.resize(width, height);
+    }
   }
 
   public override async onExit(): Promise<void> {
+    this.closePauseModal();
     this.bottleRenderers.forEach((renderer) => renderer.destroy());
     this.bottleRenderers.clear();
   }
