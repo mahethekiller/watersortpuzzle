@@ -1,4 +1,5 @@
 import { Ticker } from 'pixi.js';
+import { PerformanceTracker } from '../performance/PerformanceTracker';
 
 export type UpdateCallback = (deltaTime: number) => void;
 
@@ -12,6 +13,7 @@ export class GameLoop {
   }
 
   private tick = (ticker: Ticker): void => {
+    PerformanceTracker.getInstance().update();
     const deltaTime = ticker.deltaTime;
     this.updateCallbacks.forEach((cb) => cb(deltaTime));
   };
