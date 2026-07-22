@@ -15,6 +15,7 @@ import { ParticleSystem } from '../effects/ParticleSystem';
 import { LiquidStreamEffect } from '../effects/LiquidStreamEffect';
 import { BottleAnimator } from '../effects/BottleAnimator';
 import { AudioManager } from '../audio/AudioManager';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 import type { Application } from 'pixi.js';
 
 export class GameScene extends BaseScene {
@@ -77,6 +78,7 @@ export class GameScene extends BaseScene {
     if (!levelConfig) return;
 
     this.game.initLevel(levelConfig.bottles);
+    AnalyticsManager.getInstance().trackLevelStarted(levelConfig.levelNumber);
 
     this.hud.setLevel(levelConfig.levelNumber);
     this.hud.setMoves(0);
@@ -168,6 +170,7 @@ export class GameScene extends BaseScene {
     const bestMove = HintSolver.findBestMove(this.game.getBottles());
     if (!bestMove) return;
 
+    AnalyticsManager.getInstance().trackHintUsed(this.levelManager.getCurrentLevelNumber());
     this.clearHintHighlights();
 
     const source = this.bottleRenderers.get(bestMove.fromBottleId);
@@ -192,6 +195,10 @@ export class GameScene extends BaseScene {
 
   private handleWin(): void {
     AudioManager.getInstance().playWin();
+    const lvlNum = this.levelManager.getCurrentLevelNumber();
+    const moves = this.game.getMoveCount();
+    AnalyticsManager.getInstance().trackLevelCompleted(lvlNum, moves);
+
     this.particleSystem.spawnConfetti(70, window.innerWidth, window.innerHeight);
 
     setTimeout(() => {
@@ -229,6 +236,7 @@ export class GameScene extends BaseScene {
     const undone = this.game.undo();
     if (undone) {
       AudioManager.getInstance().playUndo();
+      AnalyticsManager.getInstance().trackUndoUsed(this.levelManager.getCurrentLevelNumber());
       this.updateRenderState();
     }
   }
