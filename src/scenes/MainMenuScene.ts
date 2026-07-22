@@ -5,6 +5,7 @@ import { SettingsModal } from '../ui/SettingsModal';
 import { ServiceContainer } from '../core/ServiceContainer';
 import { SceneManager } from '../core/SceneManager';
 import { LevelManager } from '../levels/LevelManager';
+import { DailyChallengeManager } from '../levels/DailyChallengeManager';
 
 export class MainMenuScene extends BaseScene {
   public readonly sceneName = 'MainMenuScene';
@@ -13,6 +14,7 @@ export class MainMenuScene extends BaseScene {
   private subtitleText: Text;
 
   private playBtn: UIButton;
+  private dailyBtn: UIButton;
   private levelSelectBtn: UIButton;
   private settingsBtn: UIButton;
   private settingsModal: SettingsModal | null = null;
@@ -51,19 +53,30 @@ export class MainMenuScene extends BaseScene {
     this.playBtn = new UIButton({
       label: `Play Level ${currentLvl}`,
       width: 260,
-      height: 60,
+      height: 56,
       backgroundColor: 0x22c55e,
-      fontSize: 22,
+      fontSize: 20,
       onClick: () => this.onPlayClicked(),
     });
     this.addChild(this.playBtn);
 
+    const dailyDone = DailyChallengeManager.getInstance().isDailyChallengeCompleted();
+    this.dailyBtn = new UIButton({
+      label: dailyDone ? 'Daily Done ✅' : '📅 Daily Challenge',
+      width: 260,
+      height: 50,
+      backgroundColor: dailyDone ? 0x475569 : 0xeab308,
+      fontSize: 17,
+      onClick: () => this.onDailyClicked(),
+    });
+    this.addChild(this.dailyBtn);
+
     this.levelSelectBtn = new UIButton({
       label: 'Level Select',
       width: 260,
-      height: 52,
+      height: 50,
       backgroundColor: 0x0284c7,
-      fontSize: 18,
+      fontSize: 17,
       onClick: () => this.onLevelSelectClicked(),
     });
     this.addChild(this.levelSelectBtn);
@@ -71,15 +84,20 @@ export class MainMenuScene extends BaseScene {
     this.settingsBtn = new UIButton({
       label: 'Settings',
       width: 260,
-      height: 52,
+      height: 50,
       backgroundColor: 0x475569,
-      fontSize: 18,
+      fontSize: 17,
       onClick: () => this.onSettingsClicked(),
     });
     this.addChild(this.settingsBtn);
   }
 
   private onPlayClicked(): void {
+    const sceneMgr = ServiceContainer.getInstance().get<SceneManager>('sceneManager');
+    sceneMgr.changeScene('GameScene');
+  }
+
+  private onDailyClicked(): void {
     const sceneMgr = ServiceContainer.getInstance().get<SceneManager>('sceneManager');
     sceneMgr.changeScene('GameScene');
   }
@@ -119,22 +137,26 @@ export class MainMenuScene extends BaseScene {
     const centerX = width / 2;
 
     this.titleText.x = centerX;
-    this.titleText.y = height * 0.24;
+    this.titleText.y = height * 0.20;
 
     this.subtitleText.x = centerX;
-    this.subtitleText.y = height * 0.31;
+    this.subtitleText.y = height * 0.27;
 
     const btnStartX = centerX - 130;
-    let startY = height * 0.45;
+    let startY = height * 0.38;
 
     this.playBtn.x = btnStartX;
     this.playBtn.y = startY;
 
-    startY += 80;
+    startY += 68;
+    this.dailyBtn.x = btnStartX;
+    this.dailyBtn.y = startY;
+
+    startY += 62;
     this.levelSelectBtn.x = btnStartX;
     this.levelSelectBtn.y = startY;
 
-    startY += 70;
+    startY += 62;
     this.settingsBtn.x = btnStartX;
     this.settingsBtn.y = startY;
 
