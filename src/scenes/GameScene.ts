@@ -8,6 +8,10 @@ import { LevelManager } from '../levels/LevelManager';
 import { WaterSortGame } from '../game/WaterSortGame';
 import { HUD } from '../ui/HUD';
 import { PauseModal } from '../ui/PauseModal';
+import { WinDialog } from '../ui/WinDialog';
+import { ParticleSystem } from '../effects/ParticleSystem';
+import { LiquidStreamEffect } from '../effects/LiquidStreamEffect';
+import { BottleAnimator } from '../effects/BottleAnimator';
 import type { Application } from 'pixi.js';
 
 export class GameScene extends BaseScene {
@@ -16,8 +20,15 @@ export class GameScene extends BaseScene {
   private levelManager: LevelManager;
   private game: WaterSortGame;
   private bottleRenderers: Map<number, BottleRenderer> = new Map();
+  private originalPositions: Map<number, { x: number; y: number }> = new Map();
+
   private hud: HUD;
   private pauseModal: PauseModal | null = null;
+  private winDialog: WinDialog | null = null;
+  private particleSystem: ParticleSystem;
+  private liquidStream: LiquidStreamEffect;
+
+  private isAnimatingPour: boolean = false;
 
   constructor() {
     super();
@@ -29,6 +40,9 @@ export class GameScene extends BaseScene {
       onRestart: () => this.handleRestart(),
       onPause: () => this.handlePause(),
     });
+
+    this.particleSystem = new ParticleSystem();
+    this.liquidStream = new LiquidStreamEffect();
   }
 
   public override async onInit(): Promise<void> {
@@ -38,13 +52,20 @@ export class GameScene extends BaseScene {
       TextureManager.getInstance().init(app);
     }
 
-    this.loadCurrentLevel();
+    this.addChild(this.liquidStream);
+    this.addChild(this.particleSystem);
     this.addChild(this.hud);
+
+    this.loadCurrentLevel();
   }
 
   private loadCurrentLevel(): void {
+    this.closeWinDialog();
+    this.closePauseModal();
+
     this.bottleRenderers.forEach((renderer) => renderer.destroy());
     this.bottleRenderers.clear();
+    this.originalPositions.clear();
 
     const levelConfig = this.levelManager.getCurrentLevelConfig();
     if (!levelConfig) return;
@@ -71,28 +92,101 @@ export class GameScene extends BaseScene {
       this.addChild(bottleRenderer);
     }
 
-    // Ensure HUD is on top
+    this.setChildIndex(this.liquidStream, this.children.length - 3);
+    this.setChildIndex(this.particleSystem, this.children.length - 2);
     this.setChildIndex(this.hud, this.children.length - 1);
 
     this.onResize(window.innerWidth, window.innerHeight);
   }
 
-  private onBottleTapped(bottleId: number): void {
-    if (this.pauseModal) return;
+  private async onBottleTapped(bottleId: number): Promise<void> {
+    if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
 
+    const previousSelectedId = this.game.getSelectedBottleId();
     const response = this.game.selectBottle(bottleId);
-    this.updateRenderState();
 
-    if (response.action === 'poured' && this.game.checkIsWon()) {
-      setTimeout(() => {
-        this.levelManager.completeCurrentLevel();
-        this.loadCurrentLevel();
-      }, 400);
+    const currentSelectedId = this.game.getSelectedBottleId();
+
+    // Bottle selected animation (Lift)
+    if (response.action === 'selected' && currentSelectedId !== null) {
+      const bottle = this.bottleRenderers.get(currentSelectedId);
+      const orig = this.originalPositions.get(currentSelectedId);
+      if (bottle && orig) {
+        BottleAnimator.lift(bottle, orig.y);
+      }
+    }
+
+    // Bottle deselected animation (Drop)
+    if (response.action === 'deselected' && previousSelectedId !== null) {
+      const bottle = this.bottleRenderers.get(previousSelectedId);
+      const orig = this.originalPositions.get(previousSelectedId);
+      if (bottle && orig) {
+        BottleAnimator.drop(bottle, orig.y);
+      }
+    }
+
+    // Bottle pour animation (Move, Tilt, Liquid Stream, Return)
+    if (response.action === 'poured' && 'moveRecord' in response && response.moveRecord) {
+      this.isAnimatingPour = true;
+      const record = response.moveRecord;
+      const sourceBottle = this.bottleRenderers.get(record.fromBottleId);
+      const targetBottle = this.bottleRenderers.get(record.toBottleId);
+      const origPos = this.originalPositions.get(record.fromBottleId);
+
+      if (sourceBottle && targetBottle && origPos) {
+        await BottleAnimator.animatePour(
+          sourceBottle,
+          targetBottle,
+          this.liquidStream,
+          record.color,
+          origPos.x,
+          origPos.y
+        );
+      }
+
+      this.isAnimatingPour = false;
+      this.updateRenderState();
+
+      if (this.game.checkIsWon()) {
+        this.handleWin();
+      }
+    } else {
+      this.updateRenderState();
+    }
+  }
+
+  private handleWin(): void {
+    this.particleSystem.spawnConfetti(70, window.innerWidth, window.innerHeight);
+
+    setTimeout(() => {
+      if (!this.winDialog) {
+        const lvlNum = this.levelManager.getCurrentLevelNumber();
+        this.winDialog = new WinDialog(lvlNum, {
+          onNextLevel: () => {
+            this.levelManager.completeCurrentLevel();
+            this.loadCurrentLevel();
+          },
+          onLevelSelect: () => {
+            const sceneMgr = ServiceContainer.getInstance().get<SceneManager>('sceneManager');
+            sceneMgr.changeScene('LevelSelectScene');
+          },
+        });
+        this.addChild(this.winDialog);
+        this.winDialog.resize(window.innerWidth, window.innerHeight);
+      }
+    }, 400);
+  }
+
+  private closeWinDialog(): void {
+    if (this.winDialog) {
+      this.removeChild(this.winDialog);
+      this.winDialog.destroy();
+      this.winDialog = null;
     }
   }
 
   private handleUndo(): void {
-    if (this.pauseModal) return;
+    if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
     const undone = this.game.undo();
     if (undone) {
       this.updateRenderState();
@@ -100,7 +194,7 @@ export class GameScene extends BaseScene {
   }
 
   private handleRestart(): void {
-    if (this.pauseModal) return;
+    if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
     const levelConfig = this.levelManager.getCurrentLevelConfig();
     if (levelConfig) {
       this.game.restart(levelConfig.bottles);
@@ -109,6 +203,7 @@ export class GameScene extends BaseScene {
   }
 
   private handlePause(): void {
+    if (this.isAnimatingPour || this.winDialog) return;
     if (!this.pauseModal) {
       this.pauseModal = new PauseModal({
         onResume: () => this.closePauseModal(),
@@ -152,6 +247,10 @@ export class GameScene extends BaseScene {
     this.hud.setUndoDisabled(moveCount === 0);
   }
 
+  public override update(deltaTime: number): void {
+    this.particleSystem.update(deltaTime);
+  }
+
   public override onResize(width: number, height: number): void {
     this.hud.resize(width);
 
@@ -170,12 +269,13 @@ export class GameScene extends BaseScene {
     });
 
     let idx = 0;
-    this.bottleRenderers.forEach((renderer) => {
+    this.bottleRenderers.forEach((renderer, id) => {
       if (transforms[idx]) {
         const tf = transforms[idx];
         renderer.x = tf.x;
         renderer.y = tf.y;
         renderer.scale.set(tf.scale);
+        this.originalPositions.set(id, { x: tf.x, y: tf.y });
       }
       idx++;
     });
@@ -183,11 +283,18 @@ export class GameScene extends BaseScene {
     if (this.pauseModal) {
       this.pauseModal.resize(width, height);
     }
+
+    if (this.winDialog) {
+      this.winDialog.resize(width, height);
+    }
   }
 
   public override async onExit(): Promise<void> {
+    this.closeWinDialog();
     this.closePauseModal();
+    this.particleSystem.clear();
     this.bottleRenderers.forEach((renderer) => renderer.destroy());
     this.bottleRenderers.clear();
+    this.originalPositions.clear();
   }
 }
