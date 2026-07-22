@@ -12,6 +12,7 @@ import { WinDialog } from '../ui/WinDialog';
 import { ParticleSystem } from '../effects/ParticleSystem';
 import { LiquidStreamEffect } from '../effects/LiquidStreamEffect';
 import { BottleAnimator } from '../effects/BottleAnimator';
+import { AudioManager } from '../audio/AudioManager';
 import type { Application } from 'pixi.js';
 
 export class GameScene extends BaseScene {
@@ -109,6 +110,7 @@ export class GameScene extends BaseScene {
 
     // Bottle selected animation (Lift)
     if (response.action === 'selected' && currentSelectedId !== null) {
+      AudioManager.getInstance().playSelect();
       const bottle = this.bottleRenderers.get(currentSelectedId);
       const orig = this.originalPositions.get(currentSelectedId);
       if (bottle && orig) {
@@ -128,6 +130,7 @@ export class GameScene extends BaseScene {
     // Bottle pour animation (Move, Tilt, Liquid Stream, Return)
     if (response.action === 'poured' && 'moveRecord' in response && response.moveRecord) {
       this.isAnimatingPour = true;
+      AudioManager.getInstance().playPour();
       const record = response.moveRecord;
       const sourceBottle = this.bottleRenderers.get(record.fromBottleId);
       const targetBottle = this.bottleRenderers.get(record.toBottleId);
@@ -156,6 +159,7 @@ export class GameScene extends BaseScene {
   }
 
   private handleWin(): void {
+    AudioManager.getInstance().playWin();
     this.particleSystem.spawnConfetti(70, window.innerWidth, window.innerHeight);
 
     setTimeout(() => {
@@ -189,6 +193,7 @@ export class GameScene extends BaseScene {
     if (this.isAnimatingPour || this.pauseModal || this.winDialog) return;
     const undone = this.game.undo();
     if (undone) {
+      AudioManager.getInstance().playUndo();
       this.updateRenderState();
     }
   }

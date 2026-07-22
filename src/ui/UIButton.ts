@@ -1,4 +1,5 @@
 import { Container, Graphics, Text, TextStyle } from 'pixi.js';
+import { AudioManager } from '../audio/AudioManager';
 
 export interface UIButtonConfig {
   label?: string;
@@ -71,6 +72,7 @@ export class UIButton extends Container {
     if (this.isPressed) {
       this.isPressed = false;
       this.scale.set(1.0);
+      AudioManager.getInstance().playButtonClick();
       if (this.onClickHandler) {
         this.onClickHandler();
       }
